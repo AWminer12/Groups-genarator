@@ -1,1 +1,1 @@
-get random groups
+get random groups of people
