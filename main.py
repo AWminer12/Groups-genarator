@@ -13,7 +13,7 @@ names_label.place(relx= 0.5, rely= 0.2, anchor= "center")
 confirm_names = CTkButton(text= "Confirm", fg_color= "#32cd32", text_color="#ffffff", master= window)
 confirm_names.place(relx= 0.5, rely= 0.9, anchor= "center")
 
-
+#h
 
 def calculate_groups(num_people, num_groups):
     num_people = int(num_people)
