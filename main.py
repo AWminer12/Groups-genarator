@@ -5,15 +5,13 @@ from math import floor
 window = CTk()
 window.geometry("500x400")
 
-names_entry = CTkTextbox(border_color= "#da9100",border_width=  5,
-                         master= window, scrollbar_button_color= "#ffd700", width= 150, scrollbar_button_hover_color= "#daa520")
-names_entry.place(relx= 0.5, rely= 0.5, anchor= "center")
-names_label = CTkLabel(text= "Enter names for group creation", font= ("times new roman", 15), text_color= "#da9100", master= window)
-names_label.place(relx= 0.5, rely= 0.2, anchor= "center")
-confirm_names = CTkButton(text= "Confirm", fg_color= "#32cd32", text_color="#ffffff", master= window)
-confirm_names.place(relx= 0.5, rely= 0.9, anchor= "center")
+frame1 = CTkFrame(master= window, fg_color= "#33FF68", border_color= "#07BE37", border_width= 2
+                  , corner_radius= 25, width= 200, height= 75)
+frame1.place(anchor= "nw", relx= 0.07, rely= 0.06)
+entry1 = CTkEntry(master= frame1, placeholder_text= "Voer een naam in")
+entry1.place(anchor= "nw", rely= 0.2, relx= 0.1,)
 
-#h
+
 
 def calculate_groups(num_people, num_groups):
     num_people = int(num_people)
