@@ -4,7 +4,6 @@ import os
 import csv
 
 
-
 def calculate_groups(num_people, num_groups):
     num_people = int(num_people)
     num_groups = int(num_groups)
@@ -35,9 +34,47 @@ def better_zip(boys, girls):
     return people
 
 
+def brute_force(result_gr, seti_file='genarator-settings.csv'):
+    settings_list = []
+    with open(seti_file, 'r') as file:
+        #open settings file and read it
+        csv_reader = csv.DictReader(file)
+        for line in csv_reader:
+            settings_list.append(line)
+    Wrong = 0
+    Positives = 0
+    for group in result_gr:
+        for person in group:
+            for person_dict in settings_list:
+                if person_dict['name'] == person[0]:
+                    Wrong += CheckNegative(group, person, person_dict)
+                    Positives += CheckPositive(group, person, person_dict)
+    print(f"HOERA!!! er zijn {Positives} mensen blij maar,\n nog {Wrong} fouten moeten verbetert worden")
+
+def CheckPositive(group, person, person_dict):
+    Positives = 0
+    if person_dict['withornot'] == '+':
+        for checkperson in group:
+            if person_dict['target-name'] == checkperson[0]:
+                print(f'HAPPY!! {person_dict['target-name']} zit bij {person[0]}')
+                Positives += 1
+    return Positives
+
+
+def CheckNegative(group, person, person_dict):
+    Negatives = 0
+    if person_dict['withornot'] == '-':
+        for checkperson in group:
+            if person_dict['target-name'] == checkperson[0]:
+                print(f'NIET GOED!! {person_dict['target-name']} zit bij {person[0]}')
+                Negatives += 1
+    return Negatives
+
+
 def read_csv():
     people = []
     with open("namen.csv", "r") as file:
+        #open the given file of names
         csv_reader = csv.reader(file)
 
         next(csv_reader)
@@ -51,7 +88,7 @@ def create_groups(group_nus, people):
     results = []
     prev_amount = 0
     for i,amount in enumerate(group_nus):
-        results.append([i+1, people[prev_amount:prev_amount+amount]])
+        results.append(people[prev_amount:prev_amount+amount])
         prev_amount +=amount
     save_groups(results)
     return results
@@ -66,21 +103,16 @@ def save_groups(results):
 
 def main():
     people = read_csv()
-    print(people)
     boys = [x for x in people if x[1] == 'jongen']
     girls = [x for x in people if x[1] == 'meisje']
     people = better_zip(boys, girls)
     group_format = calculate_groups(len(people), 5)
-    print(create_groups(group_format, people))
+    calculated_groups = create_groups(group_format, people)
+    print(f"calced gr {calculated_groups}")
+    print(brute_force(calculated_groups))
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
 
 
