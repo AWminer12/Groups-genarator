@@ -34,13 +34,7 @@ def better_zip(boys, girls):
     return people
 
 
-def brute_force(result_gr, seti_file='genarator-settings.csv'):
-    settings_list = []
-    with open(seti_file, 'r') as file:
-        #open settings file and read it
-        csv_reader = csv.DictReader(file)
-        for line in csv_reader:
-            settings_list.append(line)
+def Check_settings_main(result_gr, settings_list):
     Wrong = 0
     Positives = 0
     for group in result_gr:
@@ -49,14 +43,29 @@ def brute_force(result_gr, seti_file='genarator-settings.csv'):
                 if person_dict['name'] == person[0]:
                     Wrong += CheckNegative(group, person, person_dict)
                     Positives += CheckPositive(group, person, person_dict)
-    print(f"HOERA!!! er zijn {Positives} mensen blij maar,\n nog {Wrong} fouten moeten verbetert worden")
+    return Wrong, Positives
+
+
+def read_settings_file(seti_file):
+    settings_list = []
+    plusses = 0
+    with open(seti_file, 'r') as file:
+        # open settings file and read it
+        csv_reader = csv.DictReader(file)
+        for line in csv_reader:
+            settings_list.append(line)
+            if line['withornot'] == '+':
+                plusses +=1
+
+    return settings_list, plusses
+
 
 def CheckPositive(group, person, person_dict):
     Positives = 0
     if person_dict['withornot'] == '+':
         for checkperson in group:
             if person_dict['target-name'] == checkperson[0]:
-                print(f'HAPPY!! {person_dict['target-name']} zit bij {person[0]}')
+                #print(f'HAPPY!! {person_dict['target-name']} zit bij {person[0]}')
                 Positives += 1
     return Positives
 
@@ -66,12 +75,12 @@ def CheckNegative(group, person, person_dict):
     if person_dict['withornot'] == '-':
         for checkperson in group:
             if person_dict['target-name'] == checkperson[0]:
-                print(f'NIET GOED!! {person_dict['target-name']} zit bij {person[0]}')
+                #print(f'NIET GOED!! {person_dict['target-name']} zit bij {person[0]}')
                 Negatives += 1
     return Negatives
 
 
-def read_csv():
+def read_people_file():
     people = []
     with open("namen.csv", "r") as file:
         #open the given file of names
@@ -82,6 +91,7 @@ def read_csv():
             people.append(line)
     people = [[x[0].lower().rstrip().lstrip(), x[1].lower().rstrip().lstrip()] for x in people]
     return people
+
 
 
 def create_groups(group_nus, people):
@@ -101,18 +111,38 @@ def save_groups(results):
             csv_writer.writerow(group)
 
 
-def main():
-    people = read_csv()
-    boys = [x for x in people if x[1] == 'jongen']
-    girls = [x for x in people if x[1] == 'meisje']
-    people = better_zip(boys, girls)
-    group_format = calculate_groups(len(people), 5)
-    calculated_groups = create_groups(group_format, people)
-    print(f"calced gr {calculated_groups}")
-    print(brute_force(calculated_groups))
+def main(printthinges=0):
+    people = read_people_file()
+    settings_list, max_oks = read_settings_file("genarator-settings.csv")
+    i = 0
+    Fixes =1  # init on 1 to enter whiile
+    best_oks = 0
+    for i in range(0, 10000):
+        if i>0:
+            random.shuffle(people)
+        # mixing
+        boys = [x for x in people if x[1] == 'jongen']
+        girls = [x for x in people if x[1] == 'meisje']
+        people = better_zip(boys, girls)
+        group_format = calculate_groups(len(people), 5)
+        calculated_groups = create_groups(group_format, people)
+        Fixes, oks = Check_settings_main(calculated_groups, settings_list)
+        i += 1
+        if Fixes == 0 and oks > best_oks:
+            best_result = calculated_groups
+            best_oks = oks
+            if printthinges == 1:
+                print(f"fixes: {Fixes}, oks: {oks}")
+                print(i)
+                print(f"calced gr {calculated_groups}")
+            if oks == max_oks:
+                break
+    return calculated_groups
+
 
 
 if __name__ == '__main__':
-    main()
+    main(1)
+
 
 
