@@ -2,11 +2,12 @@ import random
 from math import floor
 import os
 import csv
+import doc_maker
 
 
 def calculate_groups(num_people, num_groups):
     num_people = int(num_people)
-    num_groups = int(num_groups)
+    num_groups = num_groups
     group_size = floor(num_people/num_groups)
     remainder = num_people%num_groups
     result_groups = []
@@ -86,7 +87,6 @@ def read_people_file():
         #open the given file of names
         csv_reader = csv.reader(file)
 
-        next(csv_reader)
         for line in csv_reader:
             people.append(line)
     people = [[x[0].lower().rstrip().lstrip(), x[1].lower().rstrip().lstrip()] for x in people]
@@ -100,7 +100,6 @@ def create_groups(group_nus, people):
     for i,amount in enumerate(group_nus):
         results.append(people[prev_amount:prev_amount+amount])
         prev_amount +=amount
-    save_groups(results)
     return results
 
 
@@ -111,7 +110,7 @@ def save_groups(results):
             csv_writer.writerow(group)
 
 
-def main(printthinges=0):
+def main(amount_gr, printthinges=0):
     people = read_people_file()
     settings_list, max_oks = read_settings_file("genarator-settings.csv")
     i = 0
@@ -124,7 +123,7 @@ def main(printthinges=0):
         boys = [x for x in people if x[1] == 'jongen']
         girls = [x for x in people if x[1] == 'meisje']
         people = better_zip(boys, girls)
-        group_format = calculate_groups(len(people), 5)
+        group_format = calculate_groups(len(people), amount_gr)
         calculated_groups = create_groups(group_format, people)
         Fixes, oks = Check_settings_main(calculated_groups, settings_list)
         i += 1
@@ -137,7 +136,9 @@ def main(printthinges=0):
                 print(f"calced gr {calculated_groups}")
             if oks == max_oks:
                 break
-    return calculated_groups
+    save_groups(calculated_groups)
+    doc_maker.make_pdf(calculated_groups)
+
 
 
 

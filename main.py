@@ -1,3 +1,5 @@
 import calculator
+import doc_maker
 
-print(f"Very Cool function result:{calculator.main()}")
+groups = calculator.main()
+doc_maker.make_pdf(groups)
