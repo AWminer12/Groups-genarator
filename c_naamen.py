@@ -41,13 +41,13 @@ class EditableTableApp:
         self.populate_table()
 
         self.add_button = ctk.CTkButton(root, text="Add Row", command=self.add_row, font=("Arial", 16),
-                                        fg_color="black", text_color="white")
+                                        fg_color="#303F9F", text_color="white")
         self.done_button = ctk.CTkButton(root, text="Done", command=self.export_namen, font=("Arial", 16),
-                                         fg_color="black", text_color="white")
+                                         fg_color="#303F9F", text_color="white")
 
-        self.add_button.pack(pady=10)
+        self.add_button.place(relx=0.23, rely=0.8)
 
-        self.done_button.pack(pady=10)
+        self.done_button.place(relx=0.6, rely=0.8)
 
     def export_namen(self):
         with open("namen.csv", "w") as file:
